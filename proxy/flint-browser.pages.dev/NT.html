@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>VertixUB - Home</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-gradient-start: #0c130d;
+      --bg-gradient-end: #050806;
+      --panel-bg: rgba(10, 14, 10, 0.72);
+      --panel-hover: rgba(18, 26, 18, 0.88);
+      --text: #f4fff6;
+      --text-soft: #9ab79f;
+      --accent: #8bffaf; 
+      --discord: #5865F2;
+      --border-light: rgba(140, 255, 180, 0.08);
+      --border-hover: rgba(140, 255, 180, 0.22);
+      --shadow-soft: 0 16px 40px rgba(0, 0, 0, 0.55);
+      --danger: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    
+    body {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: radial-gradient(circle at top, var(--bg-gradient-start), var(--bg-gradient-end) 80%) no-repeat fixed;
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    .main-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 700px;
+      padding: 20px;
+      z-index: 10;
+      transform: translateY(-5vh);
+    }
+
+    #particles {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.4s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-light);
+      padding: 40px;
+      border-radius: 32px;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: var(--shadow-soft);
+      transform: scale(0.9);
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .modal-overlay.active .modal-content {
+      transform: scale(1);
+    }
+
+    .modal-title {
+      font-size: 2rem;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .discord-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--discord);
+      color: white;
+      text-decoration: none;
+      padding: 14px 28px;
+      border-radius: 16px;
+      font-weight: 600;
+      margin-top: 20px;
+      transition: transform 0.2s;
+    }
+
+    .discord-btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.1);
+    }
+
+    .modal-opt-out {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 25px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .modal-opt-out input {
+      display: none;
+    }
+
+    .custom-checkbox {
+      width: 20px;
+      height: 20px;
+      border: 1px solid var(--border-light);
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.02);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .custom-checkbox i {
+      color: #111
+      font-size: 11px;
+      opacity: 0;
+      transform: scale(0.5);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .modal-opt-out:hover .custom-checkbox {
+      border-color: var(--border-hover);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .modal-opt-out input:checked + .custom-checkbox {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .modal-opt-out input:checked + .custom-checkbox i {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .modal-opt-label {
+      font-size: 0.85rem;
+      color: var(--text-soft);
+      transition: color 0.3s ease;
+    }
+
+    .modal-opt-out:hover .modal-opt-label {
+      color: var(--text);
+    }
+
+    .close-modal {
+      display: block;
+      margin-top: 15px;
+      color: var(--text-soft);
+      cursor: pointer;
+      font-size: 0.9rem;
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+
+    .close-modal:hover {
+      color: var(--accent); 
+    }
+
+    .title-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 2.5rem;
+      gap: 4px;
+    }
+
+    .title {
+      font-size: 3.2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+      font-size: 1.05rem;
+      color: var(--text-soft);
+    }
+
+    .search-card {
+      width: 100%;
+      max-width: 540px;
+      margin-bottom: 3.5rem;
+      border-radius: 40px;
+      background: var(--panel-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-soft);
+      transition: all 0.3s ease;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px 10px 24px;
+    }
+
+    .search-box input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-size: 1.1rem;
+    }
+
+    .search-box select {
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-soft);
+      border: 1px solid var(--border-light);
+      border-radius: 24px;
+      padding: 8px 14px;
+      cursor: pointer;
+    }
+
+    .shortcuts {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+      gap: 16px 16px;
+      width: 100%;
+    }
+
+    .shortcut {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.2s ease;
+    }
+
+    .shortcut-icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 20px;
+      background: var(--panel-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .shortcut:hover .shortcut-icon {
+      border-color: var(--border-hover);
+      transform: translateY(-5px);
+    }
+
+    .shortcut-icon img {
+      width: 20px;
+      height: 20px;
+      filter: brightness(0) invert(1);
+    }
+
+    .shortcut-icon i {
+      color: #ffffff;
+      font-size: 16px;
+    }
+
+    .shortcut-label {
+      font-size: 0.85rem;
+      color: var(--text-soft);
+    }
+
+    .loader {
+      position: fixed;
+      inset: 0;
+      background: rgba(13, 13, 18, 0.95);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    .loader.show { display: flex; }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    
+    footer {
+      width: 100%;
+      margin-top: auto; 
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border-light);
+      background: rgba(13, 13, 18, 0.1); /* Lighter footer bg */
+      backdrop-filter: blur(8px);
+      z-index: 10;
+    }
+
+    .footer-left, .footer-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .footer-link, .copyright {
+      color: rgba(161, 161, 170, 0.3); /* Even more faded */
+      text-decoration: none;
+      font-size: 0.75rem;
+      transition: color 0.2s ease, opacity 0.2s ease;
+    }
+
+    .footer-link:hover {
+      color: var(--text);
+    }
+
+    #resetDataBtn {
+      color: rgba(239, 68, 68, 0.3); /* Subtle danger */
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      user-select: none;
+    }
+
+    #resetDataBtn:hover {
+      color: #ef4444;
+      opacity: 1;
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.7rem;
+      color: rgba(161, 161, 170, 0.4);
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      background: #34d399;
+      border-radius: 50%;
+    }
+
+    .copyright {
+      font-size: 0.8rem;
+      color: rgba(161, 161, 170, 0.3);
+    }
+
+    .thediddytext {
+      opacity: 0;
+    }
+    
+    @keyframes spin { to { transform: rotate(360deg); } }
+  
+    :root {
+      --bg-gradient-start: #0f1b10;
+      --bg-gradient-end: #040604;
+      --panel-bg: rgba(8, 16, 8, 0.76);
+      --panel-hover: rgba(18, 34, 18, 0.92);
+      --text: #f4fff6;
+      --text-soft: #b8f9c7;
+      --accent: #64ff88;
+      --discord: #5865F2;
+      --border-light: rgba(100, 255, 136, 0.10);
+      --border-hover: rgba(100, 255, 136, 0.30);
+      --shadow-soft: 0 16px 40px rgba(0, 0, 0, 0.55);
+      --danger: #ef4444;
+    }
+
+    .title, .subtitle, .hero-subtext, .section-kicker {
+      text-shadow: 0 0 18px rgba(100,255,136,0.14);
+    }
+
+    .floating-hud, .side-rail, .hub-card, .game-card, .shortcut, .ai-shell, .chat-shell {
+      backdrop-filter: blur(16px);
+    }
+
+    @keyframes floatGlow {
+      0%,100% { transform: translateY(0px); }
+      50% { transform: translateY(-4px); }
+    }
+
+    .main-container {
+      max-width: 980px;
+      padding-inline: 24px;
+      transform: translateY(-3vh);
+    }
+
+    .title-section {
+      position: relative;
+      margin-bottom: 26px;
+    }
+
+    .subtitle {
+      animation: pulseSoft 3.2s ease-in-out infinite;
+    }
+
+    .hero-subtext {
+      margin-top: 10px;
+      color: var(--text-soft);
+      font-size: 0.86rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.85;
+    }
+
+    @keyframes pulseSoft {
+      0%, 100% { opacity: .68; transform: translateY(0); }
+      50% { opacity: 1; transform: translateY(-1px); }
+    }
+
+    .side-rail {
+      position: fixed;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 20;
+      width: 160px;
+      padding: 12px;
+      border-radius: 22px;
+      background: rgba(5, 10, 6, 0.52);
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-soft);
+      animation: fadeInUp .6s ease both;
+    }
+
+    .side-rail::before {
+      content: 'NAV';
+      font-size: 0.66rem;
+      font-weight: 800;
+      letter-spacing: 0.28em;
+      color: var(--text-soft);
+      padding: 2px 8px 10px;
+      opacity: .75;
+    }
+
+    .rail-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text);
+      background: linear-gradient(180deg, rgba(100,255,136,0.10), rgba(100,255,136,0.03));
+      border: 1px solid rgba(100,255,136,0.14);
+      border-radius: 16px;
+      padding: 12px 14px;
+      transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease, background .22s ease;
+      animation: sidePop .55s ease both;
+    }
+
+    .rail-link:nth-child(2) { animation-delay: .04s; }
+    .rail-link:nth-child(3) { animation-delay: .08s; }
+    .rail-link:nth-child(4) { animation-delay: .12s; }
+    .rail-link:nth-child(5) { animation-delay: .16s; }
+
+    .rail-link:hover {
+      transform: translateX(6px);
+      border-color: rgba(100,255,136,0.42);
+      box-shadow: 0 0 0 1px rgba(100,255,136,0.10), 0 10px 26px rgba(0,0,0,.35);
+      background: linear-gradient(180deg, rgba(100,255,136,0.18), rgba(100,255,136,0.06));
+    }
+
+    .rail-link i {
+      color: var(--accent);
+      width: 20px;
+      text-align: center;
+    }
+
+    .rail-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+
+    .rail-title {
+      font-weight: 800;
+      font-size: .92rem;
+    }
+
+    .rail-sub {
+      color: var(--text-soft);
+      font-size: .7rem;
+      margin-top: 2px;
+    }
+
+    @keyframes sidePop {
+      from { opacity: 0; transform: translateX(-12px) scale(.96); }
+      to { opacity: 1; transform: translateX(0) scale(1); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(-50%) translateX(-14px); }
+      to { opacity: 1; transform: translateY(-50%) translateX(0); }
+    }
+
+    @media (max-width: 980px) {
+      .side-rail {
+        left: 12px;
+        width: 148px;
+      }
+      .main-container {
+        max-width: 760px;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .side-rail {
+        position: static;
+        transform: none;
+        width: calc(100% - 24px);
+        margin: 0 12px 18px;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .side-rail::before {
+        width: 100%;
+        text-align: center;
+        padding-bottom: 2px;
+      }
+      .rail-link {
+        flex: 1 1 150px;
+      }
+      .main-container {
+        transform: none;
+      }
+    }
+
+</style>
+</head>
+
+<body>
+  <canvas id="particles"></canvas>
+  <div class="loader" id="loader"><div class="spinner"></div></div>
+      <span class="close-modal" id="closeModal"></span>
+    </div>
+  </div>
+
+  <div class="main-container">
+    <div class="title-section">
+      <h1 class="title">VertixUB</h1>
+      <div class="subtitle" id="rotatingSubtext">fast, clean, and a little weird</div>
+      <div class="hero-subtext">bright green • black glass • quick launch</div>
+    </div>
+
+    <div class="search-card">
+      <form class="search-box" id="searchForm">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="searchInput" placeholder="Search the web..." required autocomplete="off">
+        <select id="engine">
+  <option value="https://duckduckgo.com/?q=">DuckDuckGo</option>
+  <option value="https://search.brave.com/search?q=">Brave</option>
+  <option value="https://www.google.com/search?q=">Google</option>
+</select>
+      </form>
+    </div>
+    
+    
+    <aside class="side-rail" id="shortcuts">
+      <a class="rail-link" href="g.html">
+        <i class="fa-solid fa-gamepad"></i>
+        <span class="rail-text"><span class="rail-title">Games</span><span class="rail-sub">vault</span></span>
+      </a>
+      <a class="rail-link" href="../index.html">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span class="rail-text"><span class="rail-title">Proxy</span><span class="rail-sub">browser</span></span>
+      </a>
+      <a class="rail-link" href="ai.html">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        <span class="rail-text"><span class="rail-title">AI</span><span class="rail-sub">assistant</span></span>
+      </a>
+      <a class="rail-link" href="chat.html">
+        <i class="fa-solid fa-message"></i>
+        <span class="rail-text"><span class="rail-title">Chat</span><span class="rail-sub">rooms</span></span>
+      </a>
+    </aside>
+  </div>
+
+  <footer>
+
+    <div class="footer-left">
+      <span class="copyright">© 2026 VertixUB</span>
+      <a href="#" class="footer-link">DMCA</a>
+      <a href="https://github.com/ten8mystery/VertixUB" class="footer-link"><i class="fa-brands fa-github"></i></a>
+      
+      <a href="#" class="footer-link" id="resetDataBtn">
+        <i class="fa-solid fa-trash-can" style="font-size: 0.7rem;"></i> Reset Site Data
+      </a>
+    </div>
+    
+      </div>
+    </div>
+  </footer>
+  
+  <script>
+    const $ = s => document.querySelector(s);
+    const savedEngine = localStorage.getItem('searchEngine') || 'https://duckduckgo.com/?q=';
+document.addEventListener('DOMContentLoaded', () => {
+    $('#engine').value = savedEngine;
+});
+
+    window.onload = () => {
+      if (localStorage.getItem('hideWelcomeModal') !== 'true') {
+        $('#welcomeModal').classList.add('active');
+      }
+    };
+
+    $('#closeModal').onclick = () => {
+      if ($('#neverShowAgain').checked) {
+        localStorage.setItem('hideWelcomeModal', 'true');
+      }
+      $('#welcomeModal').classList.remove('active');
+    };
+
+    $('#resetDataBtn').onclick = (e) => {
+      e.preventDefault();
+      if (confirm("Are you sure you want to reset all data? This will clear your custom shortcuts and modal preferences.")) {
+        localStorage.clear();
+        location.reload();
+      }
+    };
+
+    const nav = url => {
+      $('#loader').classList.add('show');
+      window.parent?.postMessage({ type: 'navigate', url }, '*');
+    };
+
+    $('#searchForm').onsubmit = e => {
+      e.preventDefault();
+      const q = $('#searchInput').value.trim();
+      if (q) {
+    localStorage.setItem('searchEngine', $('#engine').value);
+    nav($('#engine').value + encodeURIComponent(q));
+}
+    };
+
+    $('#shortcuts').onclick = e => {
+      const shortcut = e.target.closest('.shortcut');
+      if (!shortcut) return;
+
+      if (shortcut.id === 'addShortcut') {
+        const name = prompt("Shortcut name:");
+        if (!name) return;
+        let url = prompt("URL:");
+        if (!url) return;
+        if (!url.startsWith('http') && !url.startsWith('/')) url = 'https://' + url;
+
+        const shortcuts = JSON.parse(localStorage.getItem('shortcuts') || '[]');
+        shortcuts.push({ name, url });
+        localStorage.setItem('shortcuts', JSON.stringify(shortcuts));
+        renderCustom();
+      } else {
+        const url = shortcut.dataset.url;
+        if (url) {
+          e.preventDefault();
+          nav(url);
+        }
+      }
+    };
+
+    function renderCustom() {
+      document.querySelectorAll('.custom-shortcut').forEach(e => e.remove());
+      const shortcuts = JSON.parse(localStorage.getItem('shortcuts') || '[]');
+      shortcuts.forEach(s => {
+        const div = document.createElement('div');
+        div.className = 'shortcut custom-shortcut';
+        div.dataset.url = s.url;
+        div.innerHTML = `<div class="shortcut-icon"><i class="fa-solid fa-link"></i></div><span class="shortcut-label">${s.name}</span>`;
+        $('#addShortcut').before(div);
+      });
+    }
+
+    renderCustom();
+
+    const canvas = document.getElementById("particles");
+    const ctx = canvas.getContext("2d");
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    resize();
+    window.onresize = resize;
+    let particles = [];
+    class Particle {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2 + 1;
+        this.vx = (Math.random() - 0.5) * 0.4;
+        this.vy = (Math.random() - 0.5) * 0.4;
+        this.alpha = 0.1 + Math.random() * 0.2;
+      }
+      update() {
+        this.x += this.vx; this.y += this.vy;
+        if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset();
+      }
+      draw() {
+        ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
+        ctx.fill();
+      }
+    }
+    for (let i = 0; i < 50; i++) particles.push(new Particle());
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    const rotatingLines = [
+      "tiny glow, big chaos",
+      "built for quick jumps",
+      "bright green and low friction",
+      "games, proxy, AI, chat",
+      "smooth, snappy, and loud"
+    ];
+    const sub = document.getElementById('rotatingSubtext');
+    let subIdx = 0;
+    setInterval(() => {
+      if (!sub) return;
+      sub.style.opacity = 0;
+      setTimeout(() => {
+        sub.textContent = rotatingLines[subIdx = (subIdx + 1) % rotatingLines.length];
+        sub.style.opacity = 1;
+      }, 180);
+    }, 2400);
+
+    document.querySelectorAll('.rail-link').forEach((el, i) => {
+      el.style.animationDelay = `${i * 70}ms`;
+    });
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VertixUB - Chat</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg1:#0f1b10;--bg2:#040604;--card:rgba(8,16,8,.76);--card2:rgba(18,34,18,.92);--text:#f4fff6;--soft:#b8f9c7;--accent:#64ff88;--rim:rgba(100,255,136,.12);--rim2:rgba(100,255,136,.3);--shadow:0 16px 40px rgba(0,0,0,.55)}
+    *{box-sizing:border-box;margin:0;padding:0;font-family:Inter,sans-serif}
+    body{min-height:100vh;color:var(--text);background:radial-gradient(circle at top,var(--bg1),var(--bg2) 80%) fixed;overflow:hidden}
+    #particles{position:fixed;inset:0;z-index:-1;pointer-events:none}
+    .wrap{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+    .sidebar{background:rgba(5,10,6,.54);border-right:1px solid var(--rim);padding:18px 14px;display:flex;flex-direction:column;gap:12px}
+    .brand{font-weight:900;letter-spacing:.18em;font-size:.74rem;color:var(--soft);text-transform:uppercase}
+    .box{background:var(--card);border:1px solid var(--rim);border-radius:20px;padding:14px;box-shadow:var(--shadow)}
+    .small{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--soft)}
+    .channels{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+    .channels button,.server button{border:none;border-radius:14px;padding:12px 12px;text-align:left;background:rgba(100,255,136,.06);color:var(--text);border:1px solid rgba(100,255,136,.12);cursor:pointer;transition:.2s}
+    .channels button:hover,.server button:hover{transform:translateX(4px);border-color:var(--rim2);background:rgba(100,255,136,.1)}
+    .main{display:flex;flex-direction:column;min-width:0}
+    .top{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--rim);background:rgba(5,10,6,.38);backdrop-filter:blur(16px)}
+    .title{font-weight:900;letter-spacing:.18em;font-size:.82rem}
+    .title span{color:var(--accent)}
+    .room{padding:16px 20px 10px;font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;color:var(--soft)}
+    .room-sub{padding:0 20px 12px;color:rgba(184,249,199,.75);font-size:.84rem}
+    .messages{flex:1;overflow:auto;padding:0 20px 16px;display:flex;flex-direction:column;gap:12px}
+    .msg{max-width:min(720px,85%);padding:14px 16px;border-radius:18px;border:1px solid var(--rim);background:rgba(100,255,136,.06)}
+    .msg.me{align-self:flex-end;background:rgba(100,255,136,.12)}
+    .who{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--soft);margin-bottom:6px}
+    .composer{padding:16px 20px 20px}
+    .bar{display:flex;gap:10px;background:var(--card);border:1px solid var(--rim);border-radius:18px;padding:12px;box-shadow:var(--shadow)}
+    .bar input{flex:1;background:none;border:none;outline:none;color:var(--text);font-size:.96rem}
+    .bar input::placeholder{color:rgba(184,249,199,.55)}
+    .bar button{border:none;background:var(--accent);color:#061006;font-weight:900;padding:10px 16px;border-radius:12px;cursor:pointer;transition:.2s}
+    .bar button:hover{transform:translateY(-1px);box-shadow:0 0 0 3px rgba(100,255,136,.14)}
+    .login{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(5,10,6,.4);backdrop-filter:blur(10px);z-index:20}
+    .login-card{width:min(360px,92vw);background:var(--card);border:1px solid var(--rim);border-radius:26px;padding:24px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:12px}
+    .login-card h1{font-size:1.45rem}
+    .login-card p{color:var(--soft);font-size:.9rem;line-height:1.45}
+    .login-card input{background:rgba(255,255,255,.03);border:1px solid var(--rim);border-radius:14px;padding:12px 14px;color:var(--text);outline:none}
+    .login-card button{background:var(--accent);border:none;color:#061006;font-weight:900;padding:12px 14px;border-radius:14px;cursor:pointer}
+    .login-card button:hover{transform:translateY(-1px)}
+    .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(100,255,136,.12);margin-right:8px}
+    @media (max-width:900px){.wrap{grid-template-columns:1fr}.sidebar{display:none}.room,.room-sub,.messages,.composer{padding-left:14px;padding-right:14px}}
+  </style>
+</head>
+<body>
+  <canvas id="particles"></canvas>
+
+  <div class="login" id="login">
+    <div class="login-card">
+      <h1>Enter Vertix Chat</h1>
+      <p>Type a display name and jump into the local chat shell. It keeps the same green-glow vibe and gives the site a real chat entry point.</p>
+      <input id="name" maxlength="20" placeholder="Username">
+      <button id="enter">Enter Chat</button>
+    </div>
+  </div>
+
+  <div class="wrap" id="appWrap" style="display:none;">
+    <aside class="sidebar">
+      <div class="brand">VertixUB / Chat</div>
+      <div class="box server">
+        <div class="small">Servers</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
+          <button>Vertix</button>
+          <button>After Dark</button>
+        </div>
+      </div>
+      <div class="box">
+        <div class="small">Channels</div>
+        <div class="channels" id="chList"></div>
+      </div>
+      <a class="box" href="nt.html" style="text-decoration:none;color:inherit">
+        <div style="font-weight:800">Back Home</div>
+        <div style="color:var(--soft);font-size:.8rem;margin-top:4px">launcher and side rail</div>
+      </a>
+    </aside>
+
+    <main class="main">
+      <div class="top">
+        <div class="title">VERTIXUB <span>CHAT</span></div>
+        <div style="font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;color:var(--soft)" id="chatSub">live rooms • local demo</div>
+      </div>
+      <div class="room" id="roomTitle"># general</div>
+      <div class="room-sub" id="roomSub"><span class="dot"></span>bright green, live-style chat shell</div>
+      <div class="messages" id="msgs"></div>
+      <div class="composer">
+        <div class="bar">
+          <input id="inp" placeholder="Send a message..." autocomplete="off">
+          <button id="send"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+<script>
+const c=document.getElementById('particles'),x=c.getContext('2d');
+function rs(){c.width=innerWidth;c.height=innerHeight}rs();addEventListener('resize',rs);
+let p=[];class P{constructor(){this.r()}r(){this.x=Math.random()*c.width;this.y=Math.random()*c.height;this.s=Math.random()*2+1;this.vx=(Math.random()-.5)*.32;this.vy=(Math.random()-.5)*.32;this.a=.09+Math.random()*.2}u(){this.x+=this.vx;this.y+=this.vy;if(this.x<0||this.x>c.width)this.vx*=-1;if(this.y<0||this.y>c.height)this.vy*=-1}d(){x.beginPath();x.arc(this.x,this.y,this.s,0,Math.PI*2);x.fillStyle=`rgba(100,255,136,${this.a})`;x.fill()}}
+for(let i=0;i<52;i++)p.push(new P());
+(function an(){x.clearRect(0,0,c.width,c.height);p.forEach(i=>{i.u();i.d()});requestAnimationFrame(an)})();
+
+const login=document.getElementById('login');
+const appWrap=document.getElementById('appWrap');
+const msgs=document.getElementById('msgs');
+const inp=document.getElementById('inp');
+const chList=document.getElementById('chList');
+const roomTitle=document.getElementById('roomTitle');
+const chatSub=document.getElementById('chatSub');
+const roomSub=document.getElementById('roomSub');
+const storeKey='vertix_chat_state';
+const defaultState={user:'',room:'general',channels:['general','lobby','memes'],messages:{
+  general:[{who:'Vertix',text:'Welcome to the Vertix chat shell.'},{who:'System',text:'This is a local demo room with the same glow.'}],
+  lobby:[{who:'Vertix',text:'Lobby is quiet. Add real networking later.'}],
+  memes:[{who:'Vertix',text:'Memes only, please.'}]
+}};
+let state=JSON.parse(localStorage.getItem(storeKey)||'null')||defaultState;
+function save(){localStorage.setItem(storeKey, JSON.stringify(state));}
+function renderChannels(){
+  chList.innerHTML='';
+  state.channels.forEach(ch=>{
+    const b=document.createElement('button');
+    b.textContent='# '+ch;
+    b.onclick=()=>switchRoom(ch);
+    chList.appendChild(b);
+  });
+}
+function renderMessages(){
+  msgs.innerHTML='';
+  const items=state.messages[state.room]||[];
+  items.forEach(m=>{
+    const d=document.createElement('div');
+    d.className='msg'+(m.who===state.user?' me':'');
+    d.innerHTML=`<div class="who">${m.who}</div><div>${m.text}</div>`;
+    msgs.appendChild(d);
+  });
+  msgs.scrollTop=msgs.scrollHeight;
+}
+function switchRoom(room){
+  state.room=room;
+  roomTitle.textContent='# '+room;
+  chatSub.textContent = room === 'general' ? 'live rooms • local demo' : room + ' • neon mode';
+  roomSub.innerHTML = '<span class="dot"></span>' + (room === 'general' ? 'bright green, live-style chat shell' : 'you are now in #' + room);
+  save();
+  renderMessages();
+}
+function addMessage(who,text){
+  if(!state.messages[state.room]) state.messages[state.room]=[];
+  state.messages[state.room].push({who,text});
+  save();
+  renderMessages();
+}
+document.getElementById('enter').onclick=()=>{
+  const name=document.getElementById('name').value.trim();
+  if(!name) return;
+  state.user=name;
+  save();
+  login.style.display='none';
+  appWrap.style.display='grid';
+  renderChannels();
+  switchRoom(state.room || 'general');
+  if(!(state.messages.general||[]).length){
+    state.messages.general=[{who:'Vertix',text:'Welcome to the Vertix chat shell.'},{who:'System',text:'This is a local demo room with the same glow.'}];
+  }
+  renderMessages();
+  inp.focus();
+};
+document.getElementById('send').onclick=()=>{
+  const v=inp.value.trim();
+  if(!v) return;
+  addMessage(state.user || 'You', v);
+  addMessage('Vertix', 'Got it: ' + v);
+  inp.value='';
+};
+inp.addEventListener('keydown',e=>{if(e.key==='Enter') document.getElementById('send').click();});
+
+if(state.user){
+  login.style.display='none';
+  appWrap.style.display='grid';
+} else {
+  appWrap.style.display='none';
+}
+renderChannels();
+switchRoom(state.room || 'general');
+const lines=['live rooms • local demo','smooth green chat shell','tiny glow, real vibe']; let i=0;
+setInterval(()=>{chatSub.style.opacity=.25; setTimeout(()=>{i=(i+1)%lines.length; chatSub.textContent=lines[i]; chatSub.style.opacity=1;},180)},2600);
+</script>
+</body>
+</html>
